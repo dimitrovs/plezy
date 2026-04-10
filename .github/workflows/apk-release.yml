@@ -47,11 +47,10 @@ jobs:
 
       - name: Configure Android signing
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
-          cat > android/key.properties <<EOF
-          storePassword=${{ secrets.ANDROID_STORE_PASSWORD }}
-          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
-          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          cat > android/key.properties <<'EOF'
+          storePassword=plezy-release
+          keyPassword=plezy-release
+          keyAlias=plezy
           storeFile=release-keystore.jks
           EOF
 
@@ -74,10 +73,6 @@ jobs:
              build/app/outputs/flutter-apk/plezy-armeabi-v7a.apk
           mv build/app/outputs/flutter-apk/app-x86_64-release.apk \
              build/app/outputs/flutter-apk/plezy-x86_64.apk
-
-      - name: Clean up keystore
-        if: always()
-        run: rm -f android/app/release-keystore.jks android/key.properties
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
