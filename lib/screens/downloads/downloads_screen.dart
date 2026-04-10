@@ -30,9 +30,10 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
   final _queueTabChipFocusNode = FocusNode(debugLabel: 'tab_chip_queue');
   final _tvShowsTabChipFocusNode = FocusNode(debugLabel: 'tab_chip_tv_shows');
   final _moviesTabChipFocusNode = FocusNode(debugLabel: 'tab_chip_movies');
+  final _musicTabChipFocusNode = FocusNode(debugLabel: 'tab_chip_music');
 
   @override
-  List<FocusNode> get tabChipFocusNodes => [_queueTabChipFocusNode, _tvShowsTabChipFocusNode, _moviesTabChipFocusNode];
+  List<FocusNode> get tabChipFocusNodes => [_queueTabChipFocusNode, _tvShowsTabChipFocusNode, _moviesTabChipFocusNode, _musicTabChipFocusNode];
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
     _queueTabChipFocusNode.dispose();
     _tvShowsTabChipFocusNode.dispose();
     _moviesTabChipFocusNode.dispose();
+    _musicTabChipFocusNode.dispose();
     disposeTabNavigation();
     super.dispose();
   }
@@ -124,6 +126,8 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
           _buildTabChip(t.downloads.tvShows, 1),
           const SizedBox(width: 8),
           _buildTabChip(t.downloads.movies, 2),
+          const SizedBox(width: 8),
+          _buildTabChip(t.downloads.music, 3),
         ],
       );
     }
@@ -164,6 +168,8 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
                           _buildTabChip(t.downloads.tvShows, 1),
                           const SizedBox(width: 8),
                           _buildTabChip(t.downloads.movies, 2),
+                          const SizedBox(width: 8),
+                          _buildTabChip(t.downloads.music, 3),
                         ],
                       ),
                     ),
@@ -215,6 +221,11 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
                         suppressAutoFocus: suppressAutoFocus,
                         onBack: focusTabBar,
                       ),
+                      _DownloadsGridContent(
+                        type: DownloadType.music,
+                        suppressAutoFocus: suppressAutoFocus,
+                        onBack: focusTabBar,
+                      ),
                     ],
                   ),
                 ),
@@ -227,7 +238,7 @@ class DownloadsScreenState extends State<DownloadsScreen> with TickerProviderSta
   }
 }
 
-enum DownloadType { manage, tvShows, movies }
+enum DownloadType { manage, tvShows, movies, music }
 
 /// Grid content for TV Shows and Movies tabs
 class _DownloadsGridContent extends StatefulWidget {
@@ -272,9 +283,17 @@ class _DownloadsGridContentState extends State<_DownloadsGridContent> {
   Widget build(BuildContext context) {
     return Consumer2<DownloadProvider, SettingsProvider>(
       builder: (context, downloadProvider, settingsProvider, _) {
-        final List<PlexMetadata> items = widget.type == DownloadType.tvShows
-            ? downloadProvider.downloadedShows
-            : downloadProvider.downloadedMovies;
+        final List<PlexMetadata> items;
+        switch (widget.type) {
+          case DownloadType.tvShows:
+            items = downloadProvider.downloadedShows;
+          case DownloadType.movies:
+            items = downloadProvider.downloadedMovies;
+          case DownloadType.music:
+            items = downloadProvider.downloadedArtists;
+          default:
+            items = [];
+        }
 
         if (items.isEmpty) {
           return _buildEmptyState();
@@ -319,10 +338,11 @@ class _DownloadsGridContentState extends State<_DownloadsGridContent> {
   }
 
   Widget _buildEmptyState() {
+    final isMusic = widget.type == DownloadType.music;
     return EmptyStateWidget(
-      message: t.downloads.noDownloads,
-      subtitle: t.downloads.noDownloadsDescription,
-      icon: Symbols.download_rounded,
+      message: isMusic ? t.downloads.noDownloadsMusic : t.downloads.noDownloads,
+      subtitle: isMusic ? t.downloads.noDownloadsMusicDescription : t.downloads.noDownloadsDescription,
+      icon: isMusic ? Symbols.music_note_rounded : Symbols.download_rounded,
       iconSize: 80,
     );
   }

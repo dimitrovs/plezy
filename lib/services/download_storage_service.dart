@@ -358,6 +358,72 @@ class DownloadStorageService {
     return path.join(subsDir.path, '$trackId.$extension');
   }
 
+  // ============================================================
+  // MUSIC DOWNLOAD PATH METHODS
+  // ============================================================
+
+  /// Get the folder name for an artist: "Artist Name"
+  String _getArtistFolderName(PlexMetadata metadata) {
+    final title = metadata.grandparentTitle ?? metadata.title!;
+    return _sanitizeFileName(title);
+  }
+
+  /// Get the folder name for an album: "Album Name (YYYY)"
+  String _getAlbumFolderName(PlexMetadata metadata) {
+    final title = metadata.parentTitle ?? metadata.title!;
+    final year = metadata.year;
+    return _formatTitleWithYear(title, year);
+  }
+
+  /// Get artist directory: downloads/Music/{Artist Name}/
+  Future<Directory> getArtistDirectory(PlexMetadata metadata) async {
+    final baseDir = await getDownloadsDirectory();
+    final artistFolder = _getArtistFolderName(metadata);
+    return _ensureDirectoryExists(Directory(path.join(baseDir.path, 'Music', artistFolder)));
+  }
+
+  /// Get album directory: downloads/Music/{Artist Name}/{Album Name (YYYY)}/
+  Future<Directory> getAlbumDirectory(PlexMetadata metadata) async {
+    final artistDir = await getArtistDirectory(metadata);
+    final albumFolder = metadata.type == 'album'
+        ? _formatTitleWithYear(metadata.title!, metadata.year)
+        : _getAlbumFolderName(metadata);
+    return _ensureDirectoryExists(Directory(path.join(artistDir.path, albumFolder)));
+  }
+
+  /// Format track filename: {XX} - {Title}
+  String _formatTrackFileName(PlexMetadata track) {
+    final trackNum = padNumber(track.index ?? 0, 2);
+    final trackName = _sanitizeFileName(track.title!);
+    return '$trackNum - $trackName';
+  }
+
+  /// Get track audio file path: .../Album/{XX} - {Title}.{ext}
+  Future<String> getTrackAudioPath(PlexMetadata track, String extension) async {
+    final albumDir = await getAlbumDirectory(track);
+    final fileName = _formatTrackFileName(track);
+    return path.join(albumDir.path, '$fileName.$extension');
+  }
+
+  /// Get track artwork path: .../Album/cover.jpg
+  Future<String> getAlbumArtworkPath(PlexMetadata metadata, String artworkType) async {
+    final albumDir = await getAlbumDirectory(metadata);
+    return path.join(albumDir.path, '$artworkType.jpg');
+  }
+
+  /// Get path components for track SAF storage
+  List<String> getTrackSafPathComponents(PlexMetadata track) {
+    final artistFolder = _getArtistFolderName(track);
+    final albumFolder = _getAlbumFolderName(track);
+    return ['Music', artistFolder, albumFolder];
+  }
+
+  /// Get SAF file name for a track
+  String getTrackSafFileName(PlexMetadata track, String extension) {
+    final fileName = _formatTrackFileName(track);
+    return '$fileName.$extension';
+  }
+
   /// Delete all files for a media item
   Future<void> deleteMediaFiles(String serverId, String ratingKey) async {
     final mediaDir = await getMediaDirectory(serverId, ratingKey);
@@ -559,6 +625,20 @@ class DownloadStorageService {
         return 'video/ogg';
       case 'webm':
         return 'video/webm';
+      case 'mp3':
+        return 'audio/mpeg';
+      case 'flac':
+        return 'audio/flac';
+      case 'm4a':
+      case 'aac':
+        return 'audio/mp4';
+      case 'ogg':
+      case 'oga':
+        return 'audio/ogg';
+      case 'wav':
+        return 'audio/wav';
+      case 'wma':
+        return 'audio/x-ms-wma';
       case 'srt':
         return 'application/x-subrip';
       case 'vtt':

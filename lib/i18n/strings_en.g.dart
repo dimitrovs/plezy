@@ -72,6 +72,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsPlaylistsEn playlists = TranslationsPlaylistsEn._(_root);
 	late final TranslationsWatchTogetherEn watchTogether = TranslationsWatchTogetherEn._(_root);
 	late final TranslationsDownloadsEn downloads = TranslationsDownloadsEn._(_root);
+	late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	late final TranslationsShadersEn shaders = TranslationsShadersEn._(_root);
 	late final TranslationsCompanionRemoteEn companionRemote = TranslationsCompanionRemoteEn._(_root);
 	late final TranslationsVideoSettingsEn videoSettings = TranslationsVideoSettingsEn._(_root);
@@ -1292,6 +1293,12 @@ class TranslationsMessagesEn {
 	/// en: 'Music playback is not yet supported'
 	String get musicNotSupported => 'Music playback is not yet supported';
 
+	/// en: 'Error loading album'
+	String get errorLoadingAlbum => 'Error loading album';
+
+	/// en: 'Error loading artist'
+	String get errorLoadingArtist => 'Error loading artist';
+
 	/// en: 'Logs cleared'
 	String get logsCleared => 'Logs cleared';
 
@@ -2281,6 +2288,69 @@ class TranslationsDownloadsEn {
 
 	/// en: '${count} items queued for download'
 	String itemsQueued({required Object count}) => '${count} items queued for download';
+
+	/// en: 'Music'
+	String get music => 'Music';
+
+	/// en: '${count} tracks queued for download'
+	String tracksQueued({required Object count}) => '${count} tracks queued for download';
+
+	/// en: 'All tracks'
+	String get allTracks => 'All tracks';
+
+	/// en: 'No music downloads yet'
+	String get noDownloadsMusic => 'No music downloads yet';
+
+	/// en: 'Downloaded music will appear here for offline listening'
+	String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
+}
+
+// Path: music
+class TranslationsMusicEn {
+	TranslationsMusicEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Albums'
+	String get albums => 'Albums';
+
+	/// en: 'Tracks'
+	String get tracks => 'Tracks';
+
+	/// en: 'Track'
+	String get track => 'Track';
+
+	/// en: 'Artist'
+	String get artist => 'Artist';
+
+	/// en: 'Album'
+	String get album => 'Album';
+
+	/// en: 'Now Playing'
+	String get nowPlaying => 'Now Playing';
+
+	/// en: 'Shuffle'
+	String get shuffle => 'Shuffle';
+
+	/// en: 'Repeat'
+	String get repeat => 'Repeat';
+
+	/// en: 'Repeat One'
+	String get repeatOne => 'Repeat One';
+
+	/// en: 'No tracks available'
+	String get noTracks => 'No tracks available';
+
+	/// en: 'Download Album'
+	String get downloadAlbum => 'Download Album';
+
+	/// en: 'Download Track'
+	String get downloadTrack => 'Download Track';
+
+	/// en: 'Playing from ${album}'
+	String playingFrom({required Object album}) => 'Playing from ${album}';
 }
 
 // Path: shaders
@@ -3465,6 +3535,8 @@ extension on Translations {
 			'messages.errorLoadingSeries' => 'Error loading series',
 			'messages.errorLoadingSeason' => 'Error loading season',
 			'messages.musicNotSupported' => 'Music playback is not yet supported',
+			'messages.errorLoadingAlbum' => 'Error loading album',
+			'messages.errorLoadingArtist' => 'Error loading artist',
 			'messages.logsCleared' => 'Logs cleared',
 			'messages.logsCopied' => 'Logs copied to clipboard',
 			'messages.noLogsAvailable' => 'No logs available',
@@ -3756,6 +3828,24 @@ extension on Translations {
 			'downloads.customAmount' => 'Custom amount...',
 			'downloads.howManyEpisodes' => 'How many episodes?',
 			'downloads.itemsQueued' => ({required Object count}) => '${count} items queued for download',
+			'downloads.music' => 'Music',
+			'downloads.tracksQueued' => ({required Object count}) => '${count} tracks queued for download',
+			'downloads.allTracks' => 'All tracks',
+			'downloads.noDownloadsMusic' => 'No music downloads yet',
+			'downloads.noDownloadsMusicDescription' => 'Downloaded music will appear here for offline listening',
+			'music.albums' => 'Albums',
+			'music.tracks' => 'Tracks',
+			'music.track' => 'Track',
+			'music.artist' => 'Artist',
+			'music.album' => 'Album',
+			'music.nowPlaying' => 'Now Playing',
+			'music.shuffle' => 'Shuffle',
+			'music.repeat' => 'Repeat',
+			'music.repeatOne' => 'Repeat One',
+			'music.noTracks' => 'No tracks available',
+			'music.downloadAlbum' => 'Download Album',
+			'music.downloadTrack' => 'Download Track',
+			'music.playingFrom' => ({required Object album}) => 'Playing from ${album}',
 			'shaders.title' => 'Shaders',
 			'shaders.noShaderDescription' => 'No video enhancement',
 			'shaders.nvscalerDescription' => 'NVIDIA image scaling for sharper video',

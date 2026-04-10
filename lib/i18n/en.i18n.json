@@ -416,6 +416,8 @@
     "errorLoadingSeries": "Error loading series",
     "errorLoadingSeason": "Error loading season",
     "musicNotSupported": "Music playback is not yet supported",
+    "errorLoadingAlbum": "Error loading album",
+    "errorLoadingArtist": "Error loading artist",
     "logsCleared": "Logs cleared",
     "logsCopied": "Logs copied to clipboard",
     "noLogsAvailable": "No logs available",
@@ -742,7 +744,27 @@
     "nextNUnwatched": "Next ${count} unwatched",
     "customAmount": "Custom amount...",
     "howManyEpisodes": "How many episodes?",
-    "itemsQueued": "${count} items queued for download"
+    "itemsQueued": "${count} items queued for download",
+    "music": "Music",
+    "tracksQueued": "${count} tracks queued for download",
+    "allTracks": "All tracks",
+    "noDownloadsMusic": "No music downloads yet",
+    "noDownloadsMusicDescription": "Downloaded music will appear here for offline listening"
+  },
+  "music": {
+    "albums": "Albums",
+    "tracks": "Tracks",
+    "track": "Track",
+    "artist": "Artist",
+    "album": "Album",
+    "nowPlaying": "Now Playing",
+    "shuffle": "Shuffle",
+    "repeat": "Repeat",
+    "repeatOne": "Repeat One",
+    "noTracks": "No tracks available",
+    "downloadAlbum": "Download Album",
+    "downloadTrack": "Download Track",
+    "playingFrom": "Playing from ${album}"
   },
   "shaders": {
     "title": "Shaders",

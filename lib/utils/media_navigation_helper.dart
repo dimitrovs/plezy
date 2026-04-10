@@ -4,6 +4,9 @@ import '../models/plex_playlist.dart';
 import '../screens/collection_detail_screen.dart';
 import '../screens/main_screen.dart';
 import '../screens/media_detail_screen.dart';
+import '../screens/music/artist_detail_screen.dart';
+import '../screens/music/album_detail_screen.dart';
+import '../screens/music/music_player_screen.dart';
 import '../screens/playlist/playlist_detail_screen.dart';
 import '../utils/global_key_utils.dart';
 import 'video_player_navigation.dart';
@@ -84,10 +87,28 @@ Future<MediaNavigationResult> navigateToMediaItem(
       return MediaNavigationResult.navigated;
 
     case PlexMediaType.artist:
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ArtistDetailScreen(metadata: metadata, isOffline: isOffline)),
+      );
+      onRefresh?.call(metadata.ratingKey);
+      return MediaNavigationResult.navigated;
+
     case PlexMediaType.album:
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AlbumDetailScreen(metadata: metadata, isOffline: isOffline)),
+      );
+      onRefresh?.call(metadata.ratingKey);
+      return MediaNavigationResult.navigated;
+
     case PlexMediaType.track:
-      // Music types not supported
-      return MediaNavigationResult.unsupported;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MusicPlayerScreen(track: metadata, isOffline: isOffline)),
+      );
+      onRefresh?.call(metadata.ratingKey);
+      return MediaNavigationResult.navigated;
 
     case PlexMediaType.clip:
     case PlexMediaType.episode:

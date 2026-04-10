@@ -149,6 +149,16 @@ extension DownloadDatabaseOperations on AppDatabase {
     return (select(downloadedMedia)..where((t) => t.grandparentRatingKey.equals(showKey))).get();
   }
 
+  /// Get all downloaded tracks for an album
+  Future<List<DownloadedMediaItem>> getTracksByAlbum(String albumKey) {
+    return (select(downloadedMedia)..where((t) => t.parentRatingKey.equals(albumKey) & t.type.equals('track'))).get();
+  }
+
+  /// Get all downloaded tracks for an artist
+  Future<List<DownloadedMediaItem>> getTracksByArtist(String artistKey) {
+    return (select(downloadedMedia)..where((t) => t.grandparentRatingKey.equals(artistKey) & t.type.equals('track'))).get();
+  }
+
   /// Get all downloaded items for a specific server
   Future<List<DownloadedMediaItem>> getDownloadsByServerId(String serverId) {
     return (select(downloadedMedia)..where((t) => t.serverId.equals(serverId))).get();
