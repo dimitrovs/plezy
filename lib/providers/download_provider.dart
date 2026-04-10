@@ -117,8 +117,8 @@ class DownloadProvider extends ChangeNotifier {
         if (metadata != null) {
           _metadata[item.globalKey] = metadata;
 
-          // For episodes, also load parent (show and season) metadata from the same map
-          if (metadata.isEpisode) {
+          // For episodes/tracks, also load parent metadata from the same map
+          if (metadata.isEpisode || metadata.isTrack) {
             _loadParentMetadataFromMap(metadata, allMetadata);
           }
         }
@@ -305,6 +305,85 @@ class DownloadProvider extends ChangeNotifier {
         })
         .map((entry) => entry.value)
         .toList();
+  }
+
+  /// Get completed track downloads
+  List<PlexMetadata> get downloadedTracks {
+    return _metadata.entries
+        .where((entry) {
+          final progress = _downloads[entry.key];
+          return progress?.status == DownloadStatus.completed && entry.value.type == 'track';
+        })
+        .map((entry) => entry.value)
+        .toList();
+  }
+
+  /// Get unique artists that have downloaded tracks
+  List<PlexMetadata> get downloadedArtists {
+    final Map<String, PlexMetadata> artists = {};
+
+    for (final entry in _metadata.entries) {
+      final globalKey = entry.key;
+      final meta = entry.value;
+      final progress = _downloads[globalKey];
+
+      if (progress?.status == DownloadStatus.completed && meta.type == 'track') {
+        final artistRatingKey = meta.grandparentRatingKey;
+        if (artistRatingKey != null && !artists.containsKey(artistRatingKey)) {
+          final artistGlobalKey = buildGlobalKey(meta.serverId!, artistRatingKey);
+          final storedArtist = _metadata[artistGlobalKey];
+
+          if (storedArtist != null && storedArtist.type == 'artist') {
+            artists[artistRatingKey] = storedArtist;
+          } else {
+            artists[artistRatingKey] = PlexMetadata(
+              ratingKey: artistRatingKey,
+              key: '/library/metadata/$artistRatingKey',
+              type: 'artist',
+              title: meta.grandparentTitle ?? 'Unknown Artist',
+              thumb: meta.grandparentThumb,
+              art: meta.grandparentArt,
+              serverId: meta.serverId,
+            );
+          }
+        }
+      }
+    }
+
+    return artists.values.toList();
+  }
+
+  /// Get downloaded tracks for a specific artist
+  List<PlexMetadata> getDownloadedTracksForArtist(String artistRatingKey) {
+    return _metadata.entries
+        .where((entry) {
+          final progress = _downloads[entry.key];
+          final meta = entry.value;
+          return progress?.status == DownloadStatus.completed &&
+              meta.type == 'track' &&
+              meta.grandparentRatingKey == artistRatingKey;
+        })
+        .map((entry) => entry.value)
+        .toList();
+  }
+
+  /// Get downloaded tracks for a specific album
+  List<PlexMetadata> getDownloadedTracksForAlbum(String albumRatingKey) {
+    return _metadata.entries
+        .where((entry) {
+          final progress = _downloads[entry.key];
+          final meta = entry.value;
+          return progress?.status == DownloadStatus.completed &&
+              meta.type == 'track' &&
+              meta.parentRatingKey == albumRatingKey;
+        })
+        .map((entry) => entry.value)
+        .toList();
+  }
+
+  /// Get the local audio file path for a downloaded track
+  Future<String?> getAudioFilePath(String globalKey) async {
+    return getVideoFilePath(globalKey);
   }
 
   /// Get metadata for a specific download
@@ -621,7 +700,7 @@ class DownloadProvider extends ChangeNotifier {
 
       final mt = metadata.mediaType;
 
-      if (mt == PlexMediaType.movie || mt == PlexMediaType.episode) {
+      if (mt == PlexMediaType.movie || mt == PlexMediaType.episode || mt == PlexMediaType.track) {
         final queued = await _queueSingleDownload(metadata, client, mediaIndex: config.mediaIndex);
         return queued ? 1 : 0;
       } else if (mt == PlexMediaType.show) {
@@ -630,6 +709,12 @@ class DownloadProvider extends ChangeNotifier {
       } else if (mt == PlexMediaType.season) {
         _metadata[globalKey] = metadata;
         return await _queueSeasonDownload(metadata, client, versionConfig: config, filter: filter, maxCount: maxCount);
+      } else if (mt == PlexMediaType.album) {
+        _metadata[globalKey] = metadata;
+        return await _queueAlbumDownload(metadata, client);
+      } else if (mt == PlexMediaType.artist) {
+        _metadata[globalKey] = metadata;
+        return await _queueArtistDownload(metadata, client);
       } else {
         throw Exception('Cannot download ${metadata.type}');
       }
@@ -711,8 +796,10 @@ class DownloadProvider extends ChangeNotifier {
       }
     }
 
-    // For episodes, also fetch and store show and season metadata for offline display
+    // For episodes/tracks, also fetch and store parent metadata for offline display
     if (metadataToStore.type == 'episode') {
+      await _fetchAndStoreParentMetadata(metadataToStore, client);
+    } else if (metadataToStore.type == 'track') {
       await _fetchAndStoreParentMetadata(metadataToStore, client);
     }
 
@@ -817,6 +904,38 @@ class DownloadProvider extends ChangeNotifier {
         final episodeWithServer = _ensureServerId(episode, season.serverId);
         final queued = await _queueSingleDownload(episodeWithServer, client, versionConfig: versionConfig);
         if (queued) count++;
+      }
+    }
+
+    return count;
+  }
+
+  /// Queue all tracks from an album for download
+  Future<int> _queueAlbumDownload(PlexMetadata album, PlexClient client) async {
+    int count = 0;
+    final tracks = await client.getChildren(album.ratingKey);
+
+    for (final track in tracks) {
+      if (track.type == 'track') {
+        final trackWithServer = _ensureServerId(track, album.serverId);
+        final queued = await _queueSingleDownload(trackWithServer, client);
+        if (queued) count++;
+      }
+    }
+
+    return count;
+  }
+
+  /// Queue all tracks from an artist for download
+  Future<int> _queueArtistDownload(PlexMetadata artist, PlexClient client) async {
+    int count = 0;
+    final albums = await client.getChildren(artist.ratingKey);
+
+    for (final album in albums) {
+      if (album.type == 'album') {
+        final albumWithServer = _ensureServerId(album, artist.serverId);
+        _metadata[albumWithServer.globalKey] = albumWithServer;
+        count += await _queueAlbumDownload(albumWithServer, client);
       }
     }
 

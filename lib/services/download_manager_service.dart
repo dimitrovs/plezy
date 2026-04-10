@@ -463,18 +463,20 @@ class DownloadManagerService {
       }
 
       final selectedMediaIndex = existing.mediaIndex;
+      final isTrack = metadata.type == 'track';
       var playbackData = await client.getVideoPlaybackData(metadata.ratingKey, mediaIndex: selectedMediaIndex);
       if (playbackData.videoUrl == null) {
         // Cache may contain a synthetic entry (from _cacheMetadataForOffline) without
         // Media/Part data. Force a fresh network fetch to populate the cache properly.
-        appLogger.w('No video URL from cache for $globalKey, retrying via network');
+        appLogger.w('No media URL from cache for $globalKey, retrying via network');
         final fetched = await client.getMetadataWithImages(ratingKey);
         if (fetched != null) metadata = fetched.copyWith(serverId: serverId);
         playbackData = await client.getVideoPlaybackData(metadata.ratingKey, mediaIndex: selectedMediaIndex);
-        if (playbackData.videoUrl == null) throw Exception('Could not get video URL for $globalKey');
+        if (playbackData.videoUrl == null) throw Exception('Could not get media URL for $globalKey');
       }
 
-      final ext = _getExtensionFromUrl(playbackData.videoUrl!) ?? 'mp4';
+      final defaultExt = isTrack ? 'mp3' : 'mp4';
+      final ext = _getExtensionFromUrl(playbackData.videoUrl!) ?? defaultExt;
 
       // Look up show year for episodes
       final showYear = metadata.type == 'episode'
@@ -482,9 +484,14 @@ class DownloadManagerService {
           : null;
 
       // Build display name for notifications
-      final displayName = metadata.type == 'episode'
-          ? '${metadata.grandparentTitle ?? metadata.displayTitle} - ${metadata.displayTitle}'
-          : metadata.displayTitle;
+      final String displayName;
+      if (metadata.type == 'episode') {
+        displayName = '${metadata.grandparentTitle ?? metadata.displayTitle} - ${metadata.displayTitle}';
+      } else if (isTrack) {
+        displayName = '${metadata.grandparentTitle ?? ''} - ${metadata.title ?? metadata.displayTitle}';
+      } else {
+        displayName = metadata.displayTitle;
+      }
 
       // Get WiFi-only setting for native enforcement
       final settings = await SettingsService.getInstance();
@@ -500,6 +507,9 @@ class DownloadManagerService {
         } else if (metadata.type == 'episode') {
           pathComponents = _storageService.getEpisodeSafPathComponents(metadata, showYear: showYear);
           safFileName = _storageService.getEpisodeSafFileName(metadata, ext);
+        } else if (isTrack) {
+          pathComponents = _storageService.getTrackSafPathComponents(metadata);
+          safFileName = _storageService.getTrackSafFileName(metadata, ext);
         } else {
           pathComponents = [serverId, metadata.ratingKey];
           safFileName = 'video.$ext';
@@ -545,6 +555,8 @@ class DownloadManagerService {
           downloadFilePath = await _storageService.getMovieVideoPath(metadata, ext);
         } else if (metadata.type == 'episode') {
           downloadFilePath = await _storageService.getEpisodeVideoPath(metadata, ext, showYear: showYear);
+        } else if (isTrack) {
+          downloadFilePath = await _storageService.getTrackAudioPath(metadata, ext);
         } else {
           downloadFilePath = await _storageService.getVideoFilePath(serverId, metadata.ratingKey, ext);
         }
@@ -848,11 +860,14 @@ class DownloadManagerService {
         final downloadSubtitles = queueItem?.downloadSubtitles ?? true;
 
         if (metadata != null && client != null) {
+          final isTrackType = metadata.type == 'track';
           if (downloadArtwork) {
             await _downloadArtwork(globalKey, metadata, client);
-            await _downloadChapterThumbnails(metadata.serverId!, metadata.ratingKey, client);
+            if (!isTrackType) {
+              await _downloadChapterThumbnails(metadata.serverId!, metadata.ratingKey, client);
+            }
           }
-          if (downloadSubtitles) {
+          if (downloadSubtitles && !isTrackType) {
             PlexMediaInfo? mediaInfo = ctx?.mediaInfo;
             if (mediaInfo == null) {
               try {
@@ -916,6 +931,9 @@ class DownloadManagerService {
     } else if (metadata.type == 'episode') {
       pathComponents = _storageService.getEpisodeSafPathComponents(metadata, showYear: showYear);
       safFileName = _storageService.getEpisodeSafFileName(metadata, ext);
+    } else if (metadata.type == 'track') {
+      pathComponents = _storageService.getTrackSafPathComponents(metadata);
+      safFileName = _storageService.getTrackSafFileName(metadata, ext);
     } else {
       pathComponents = [metadata.serverId!, metadata.ratingKey];
       safFileName = 'video.$ext';
@@ -1313,6 +1331,7 @@ class DownloadManagerService {
     switch (metadata.mediaType) {
       case PlexMediaType.episode:
       case PlexMediaType.movie:
+      case PlexMediaType.track:
         return 1;
       case PlexMediaType.season:
         final episodes = await _database.getEpisodesBySeason(metadata.ratingKey);
@@ -1320,6 +1339,12 @@ class DownloadManagerService {
       case PlexMediaType.show:
         final episodes = await _database.getEpisodesByShow(metadata.ratingKey);
         return episodes.length;
+      case PlexMediaType.album:
+        final tracks = await _database.getTracksByAlbum(metadata.ratingKey);
+        return tracks.length;
+      case PlexMediaType.artist:
+        final tracks = await _database.getTracksByArtist(metadata.ratingKey);
+        return tracks.length;
       default:
         return 1;
     }
@@ -1356,6 +1381,9 @@ class DownloadManagerService {
           break;
         case PlexMediaType.movie:
           await _deleteMovieFiles(metadata, serverId);
+          break;
+        case PlexMediaType.track:
+          await _deleteTrackFiles(metadata, serverId);
           break;
         default:
           appLogger.w('Unknown type for deletion: ${metadata.type}');
@@ -1585,6 +1613,36 @@ class DownloadManagerService {
       await _ensureDbFileDeleted(serverId, movie.ratingKey);
     } catch (e, stack) {
       appLogger.e('Error deleting movie files', error: e, stackTrace: stack);
+    }
+  }
+
+  /// Delete track (music) files
+  Future<void> _deleteTrackFiles(PlexMetadata track, String serverId) async {
+    try {
+      // Delete the audio file
+      final audioPathTemplate = await _storageService.getTrackAudioPath(track, 'tmp');
+      final audioPathWithoutExt = audioPathTemplate.substring(0, audioPathTemplate.lastIndexOf('.'));
+      final actualAudioFile = await _findFileWithAnyExtension(audioPathWithoutExt);
+      if (actualAudioFile != null) {
+        await _deleteFileIfExists(actualAudioFile, 'track audio');
+      }
+
+      // Safety net: verify the actual DB-recorded file is gone
+      await _ensureDbFileDeleted(serverId, track.ratingKey);
+
+      // Clean up empty album/artist directories
+      final albumDir = await _storageService.getAlbumDirectory(track);
+      if (await albumDir.exists() && (await albumDir.list().isEmpty)) {
+        await albumDir.delete(recursive: true);
+        appLogger.i('Deleted empty album directory: ${albumDir.path}');
+      }
+      final artistDir = await _storageService.getArtistDirectory(track);
+      if (await artistDir.exists() && (await artistDir.list().isEmpty)) {
+        await artistDir.delete(recursive: true);
+        appLogger.i('Deleted empty artist directory: ${artistDir.path}');
+      }
+    } catch (e, stack) {
+      appLogger.e('Error deleting track files', error: e, stackTrace: stack);
     }
   }
 
