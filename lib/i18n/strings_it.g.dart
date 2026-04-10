@@ -66,7 +66,7 @@ class TranslationsIt with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsNavigationIt navigation = _TranslationsNavigationIt._(_root);
 	@override late final _TranslationsLiveTvIt liveTv = _TranslationsLiveTvIt._(_root);
 	@override late final _TranslationsDownloadsIt downloads = _TranslationsDownloadsIt._(_root);
-	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
+	@override late final _TranslationsMusicIt music = _TranslationsMusicIt._(_root);
 	@override late final _TranslationsPlaylistsIt playlists = _TranslationsPlaylistsIt._(_root);
 	@override late final _TranslationsCollectionsIt collections = _TranslationsCollectionsIt._(_root);
 	@override late final _TranslationsWatchTogetherIt watchTogether = _TranslationsWatchTogetherIt._(_root);
@@ -887,6 +887,28 @@ class _TranslationsDownloadsIt implements TranslationsDownloadsEn {
 	@override String get allTracks => 'All tracks';
 	@override String get noDownloadsMusic => 'No music downloads yet';
 	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
+}
+
+// Path: music
+class _TranslationsMusicIt implements TranslationsMusicEn {
+	_TranslationsMusicIt._(this._root);
+
+	final TranslationsIt _root; // ignore: unused_field
+
+	// Translations
+	@override String get albums => 'Albums';
+	@override String get tracks => 'Tracks';
+	@override String get track => 'Track';
+	@override String get artist => 'Artist';
+	@override String get album => 'Album';
+	@override String get nowPlaying => 'Now Playing';
+	@override String get shuffle => 'Shuffle';
+	@override String get repeat => 'Repeat';
+	@override String get repeatOne => 'Repeat One';
+	@override String get noTracks => 'No tracks available';
+	@override String get downloadAlbum => 'Download Album';
+	@override String get downloadTrack => 'Download Track';
+	@override String playingFrom({required Object album}) => 'Playing from ${album}';
 }
 
 // Path: playlists

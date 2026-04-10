@@ -69,7 +69,7 @@ class TranslationsPt with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsPlaylistsPt playlists = _TranslationsPlaylistsPt._(_root);
 	@override late final _TranslationsWatchTogetherPt watchTogether = _TranslationsWatchTogetherPt._(_root);
 	@override late final _TranslationsDownloadsPt downloads = _TranslationsDownloadsPt._(_root);
-	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
+	@override late final _TranslationsMusicPt music = _TranslationsMusicPt._(_root);
 	@override late final _TranslationsShadersPt shaders = _TranslationsShadersPt._(_root);
 	@override late final _TranslationsCompanionRemotePt companionRemote = _TranslationsCompanionRemotePt._(_root);
 	@override late final _TranslationsVideoSettingsPt videoSettings = _TranslationsVideoSettingsPt._(_root);
@@ -1011,6 +1011,28 @@ class _TranslationsDownloadsPt implements TranslationsDownloadsEn {
 	@override String get allTracks => 'All tracks';
 	@override String get noDownloadsMusic => 'No music downloads yet';
 	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
+}
+
+// Path: music
+class _TranslationsMusicPt implements TranslationsMusicEn {
+	_TranslationsMusicPt._(this._root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get albums => 'Albums';
+	@override String get tracks => 'Tracks';
+	@override String get track => 'Track';
+	@override String get artist => 'Artist';
+	@override String get album => 'Album';
+	@override String get nowPlaying => 'Now Playing';
+	@override String get shuffle => 'Shuffle';
+	@override String get repeat => 'Repeat';
+	@override String get repeatOne => 'Repeat One';
+	@override String get noTracks => 'No tracks available';
+	@override String get downloadAlbum => 'Download Album';
+	@override String get downloadTrack => 'Download Track';
+	@override String playingFrom({required Object album}) => 'Playing from ${album}';
 }
 
 // Path: shaders
