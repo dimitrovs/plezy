@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:plezy/widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 import '../../focus/focusable_button.dart';
 import '../../focus/focusable_wrapper.dart';
 import '../../models/plex_metadata.dart';
+import '../../models/download_models.dart';
+import '../../providers/download_provider.dart';
 import '../../i18n/strings.g.dart';
 
 /// Individual item in the folder tree
@@ -13,10 +16,12 @@ class FolderTreeItem extends StatelessWidget {
   final int depth;
   final bool isExpanded;
   final bool isFolder;
+  final bool isMusicLibrary;
   final VoidCallback? onTap;
   final VoidCallback? onExpand;
   final VoidCallback? onPlayAll;
   final VoidCallback? onShuffle;
+  final VoidCallback? onDownload;
   final bool isLoading;
   final FocusNode? focusNode;
   final VoidCallback? onNavigateUp;
@@ -27,10 +32,12 @@ class FolderTreeItem extends StatelessWidget {
     required this.depth,
     this.isExpanded = false,
     this.isFolder = false,
+    this.isMusicLibrary = false,
     this.onTap,
     this.onExpand,
     this.onPlayAll,
     this.onShuffle,
+    this.onDownload,
     this.isLoading = false,
     this.focusNode,
     this.onNavigateUp,
@@ -48,6 +55,9 @@ class FolderTreeItem extends StatelessWidget {
       PlexMediaType.season => Symbols.video_library_rounded,
       PlexMediaType.episode => Symbols.play_circle_rounded,
       PlexMediaType.collection => Symbols.collections_rounded,
+      PlexMediaType.track => Symbols.music_note_rounded,
+      PlexMediaType.album => Symbols.album_rounded,
+      PlexMediaType.artist => Symbols.person_rounded,
       _ => Symbols.insert_drive_file_rounded,
     };
   }
@@ -104,6 +114,31 @@ class FolderTreeItem extends StatelessWidget {
             ),
           ),
 
+          // Download status for music tracks
+          if (isMusicLibrary && !isFolder && onDownload != null)
+            Consumer<DownloadProvider>(
+              builder: (context, dp, _) {
+                final progress = dp.getProgress(item.globalKey);
+                if (progress != null && progress.status == DownloadStatus.completed) {
+                  return const Padding(
+                    padding: EdgeInsets.only(right: 4),
+                    child: Icon(Icons.download_done, size: 18, color: Colors.green),
+                  );
+                }
+                if (progress != null && (progress.status == DownloadStatus.downloading || progress.status == DownloadStatus.queued)) {
+                  return const Padding(
+                    padding: EdgeInsets.only(right: 4),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+
           // Additional metadata for files
           if (!isFolder && item.year != null)
             Text(
@@ -133,8 +168,57 @@ class FolderTreeItem extends StatelessWidget {
           ),
         ),
 
-        // Play/Shuffle buttons for folders
+        // Download button for music tracks (non-folder items)
+        if (isMusicLibrary && !isFolder && onDownload != null)
+          Consumer<DownloadProvider>(
+            builder: (context, dp, _) {
+              final progress = dp.getProgress(item.globalKey);
+              final isDownloaded = progress?.status == DownloadStatus.completed;
+              final isDownloading = progress?.status == DownloadStatus.downloading ||
+                  progress?.status == DownloadStatus.queued;
+              if (isDownloaded || isDownloading) return const SizedBox.shrink();
+              return FocusableButton(
+                useBackgroundFocus: true,
+                onPressed: onDownload,
+                child: IconButton(
+                  onPressed: onDownload,
+                  icon: AppIcon(
+                    Symbols.download_rounded,
+                    fill: 1,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  tooltip: t.music.downloadTrack,
+                  iconSize: 18,
+                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+              );
+            },
+          ),
+
+        // Play/Shuffle/Download buttons for folders
         if (isFolder) ...[
+          if (isMusicLibrary && onDownload != null)
+            FocusableButton(
+              useBackgroundFocus: true,
+              onPressed: onDownload,
+              child: IconButton(
+                onPressed: onDownload,
+                icon: AppIcon(
+                  Symbols.download_rounded,
+                  fill: 1,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                tooltip: t.music.downloadAlbum,
+                iconSize: 18,
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                padding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
           FocusableButton(
             useBackgroundFocus: true,
             onPressed: onPlayAll,

@@ -1036,6 +1036,7 @@ class _LibraryBrowseTabState extends BaseLibraryTabState<PlexMetadata, LibraryBr
             child: FolderTreeView(
               libraryKey: widget.library.key,
               serverId: widget.library.serverId,
+              isMusicLibrary: widget.library.type.toLowerCase() == 'artist',
               onRefresh: updateItem,
               firstItemFocusNode: firstItemFocusNode,
               onNavigateUp: _navigateToChips,

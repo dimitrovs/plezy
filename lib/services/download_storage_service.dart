@@ -424,6 +424,14 @@ class DownloadStorageService {
     return '$fileName.$extension';
   }
 
+  /// Get the shared storage subdirectory for a track (used with moveToSharedStorage).
+  /// Returns a path like "Plezy/Artist Name/Album Name (YYYY)"
+  String getTrackSharedStorageDirectory(PlexMetadata track) {
+    final artistFolder = _getArtistFolderName(track);
+    final albumFolder = _getAlbumFolderName(track);
+    return path.join('Plezy', artistFolder, albumFolder);
+  }
+
   /// Delete all files for a media item
   Future<void> deleteMediaFiles(String serverId, String ratingKey) async {
     final mediaDir = await getMediaDirectory(serverId, ratingKey);
