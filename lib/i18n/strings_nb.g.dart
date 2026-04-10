@@ -69,6 +69,7 @@ class TranslationsNb with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsPlaylistsNb playlists = _TranslationsPlaylistsNb._(_root);
 	@override late final _TranslationsWatchTogetherNb watchTogether = _TranslationsWatchTogetherNb._(_root);
 	@override late final _TranslationsDownloadsNb downloads = _TranslationsDownloadsNb._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsShadersNb shaders = _TranslationsShadersNb._(_root);
 	@override late final _TranslationsCompanionRemoteNb companionRemote = _TranslationsCompanionRemoteNb._(_root);
 	@override late final _TranslationsVideoSettingsNb videoSettings = _TranslationsVideoSettingsNb._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesNb implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'Feil ved lasting av serie';
 	@override String get errorLoadingSeason => 'Feil ved lasting av sesong';
 	@override String get musicNotSupported => 'Musikkavspilling støttes ikke ennå';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'Logger tømt';
 	@override String get logsCopied => 'Logger kopiert til utklippstavle';
 	@override String get noLogsAvailable => 'Ingen logger tilgjengelig';
@@ -1003,6 +1006,11 @@ class _TranslationsDownloadsNb implements TranslationsDownloadsEn {
 	@override String get customAmount => 'Egendefinert antall...';
 	@override String get howManyEpisodes => 'Hvor mange episoder?';
 	@override String itemsQueued({required Object count}) => '${count} elementer i nedlastingskø';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: shaders

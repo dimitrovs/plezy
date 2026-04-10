@@ -66,6 +66,7 @@ class TranslationsZh with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsNavigationZh navigation = _TranslationsNavigationZh._(_root);
 	@override late final _TranslationsLiveTvZh liveTv = _TranslationsLiveTvZh._(_root);
 	@override late final _TranslationsDownloadsZh downloads = _TranslationsDownloadsZh._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsPlaylistsZh playlists = _TranslationsPlaylistsZh._(_root);
 	@override late final _TranslationsCollectionsZh collections = _TranslationsCollectionsZh._(_root);
 	@override late final _TranslationsWatchTogetherZh watchTogether = _TranslationsWatchTogetherZh._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesZh implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => '加载系列时出错';
 	@override String get errorLoadingSeason => '加载季时出错';
 	@override String get musicNotSupported => '尚不支持播放音乐';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => '日志已清除';
 	@override String get logsCopied => '日志已复制到剪贴板';
 	@override String get noLogsAvailable => '没有可用日志';
@@ -879,6 +882,11 @@ class _TranslationsDownloadsZh implements TranslationsDownloadsEn {
 	@override String get customAmount => '自定义数量...';
 	@override String get howManyEpisodes => '下载几集？';
 	@override String itemsQueued({required Object count}) => '${count} 个项目已加入下载队列';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: playlists
