@@ -842,23 +842,20 @@ class DownloadManagerService {
 
       // ── Phase 1b: Move music tracks to shared storage on Android ──
       var finalStoredPath = storedPath;
-      if (Platform.isAndroid && ctx != null && !ctx.isSafMode) {
+      if (Platform.isAndroid && ctx != null && !ctx.isSafMode && task is DownloadTask) {
         final metadata = ctx.metadata;
         if (metadata.type == 'track') {
           try {
-            final absolutePath = await _storageService.ensureAbsolutePath(storedPath);
-            if (await File(absolutePath).exists()) {
-              // Build subdirectory: Plezy/Artist/Album
-              final subDir = _storageService.getTrackSharedStorageDirectory(metadata);
-              final newPath = await FileDownloader().moveToSharedStorage(
-                absolutePath,
-                SharedStorage.audio,
-                directory: subDir,
-              );
-              if (newPath != null) {
-                finalStoredPath = newPath;
-                appLogger.i('Moved track to shared storage: $newPath');
-              }
+            // Build subdirectory: Plezy/Artist/Album
+            final subDir = _storageService.getTrackSharedStorageDirectory(metadata);
+            final newPath = await FileDownloader().moveToSharedStorage(
+              task,
+              SharedStorage.audio,
+              directory: subDir,
+            );
+            if (newPath != null) {
+              finalStoredPath = newPath;
+              appLogger.i('Moved track to shared storage: $newPath');
             }
           } catch (e) {
             appLogger.w('Failed to move track to shared storage (keeping in app storage)', error: e);
