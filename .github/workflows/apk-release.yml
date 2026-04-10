@@ -45,20 +45,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate a self-signed keystore
+      - name: Configure Android signing
         run: |
-          keytool -genkey -v \
-            -keystore android/app/release-keystore.jks \
-            -alias plezy \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass plezy-release \
-            -keypass plezy-release \
-            -dname "CN=Plezy Self-Signed, O=dimitrovs, L=Unknown, ST=Unknown, C=US"
-
-          cat > android/key.properties <<'EOF'
-          storePassword=plezy-release
-          keyPassword=plezy-release
-          keyAlias=plezy
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.ANDROID_STORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
           storeFile=release-keystore.jks
           EOF
 
