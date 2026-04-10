@@ -66,6 +66,7 @@ class TranslationsSv with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsNavigationSv navigation = _TranslationsNavigationSv._(_root);
 	@override late final _TranslationsLiveTvSv liveTv = _TranslationsLiveTvSv._(_root);
 	@override late final _TranslationsDownloadsSv downloads = _TranslationsDownloadsSv._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsPlaylistsSv playlists = _TranslationsPlaylistsSv._(_root);
 	@override late final _TranslationsCollectionsSv collections = _TranslationsCollectionsSv._(_root);
 	@override late final _TranslationsWatchTogetherSv watchTogether = _TranslationsWatchTogetherSv._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesSv implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'Fel vid laddning av serie';
 	@override String get errorLoadingSeason => 'Fel vid laddning av säsong';
 	@override String get musicNotSupported => 'Musikuppspelning stöds inte ännu';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'Loggar rensade';
 	@override String get logsCopied => 'Loggar kopierade till urklipp';
 	@override String get noLogsAvailable => 'Inga loggar tillgängliga';
@@ -879,6 +882,11 @@ class _TranslationsDownloadsSv implements TranslationsDownloadsEn {
 	@override String get customAmount => 'Ange antal...';
 	@override String get howManyEpisodes => 'Hur många avsnitt?';
 	@override String itemsQueued({required Object count}) => '${count} objekt köade för nedladdning';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: playlists

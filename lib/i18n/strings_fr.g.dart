@@ -69,6 +69,7 @@ class TranslationsFr with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsPlaylistsFr playlists = _TranslationsPlaylistsFr._(_root);
 	@override late final _TranslationsWatchTogetherFr watchTogether = _TranslationsWatchTogetherFr._(_root);
 	@override late final _TranslationsDownloadsFr downloads = _TranslationsDownloadsFr._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsShadersFr shaders = _TranslationsShadersFr._(_root);
 	@override late final _TranslationsCompanionRemoteFr companionRemote = _TranslationsCompanionRemoteFr._(_root);
 	@override late final _TranslationsVideoSettingsFr videoSettings = _TranslationsVideoSettingsFr._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesFr implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'Erreur lors du chargement de la série';
 	@override String get errorLoadingSeason => 'Erreur lors du chargement de la saison';
 	@override String get musicNotSupported => 'La lecture de musique n\'est pas encore prise en charge';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'Logs effacés';
 	@override String get logsCopied => 'Logs copiés dans le presse-papier';
 	@override String get noLogsAvailable => 'Aucun log disponible';
@@ -1003,6 +1006,11 @@ class _TranslationsDownloadsFr implements TranslationsDownloadsEn {
 	@override String get customAmount => 'Quantité personnalisée...';
 	@override String get howManyEpisodes => 'Combien d\'épisodes ?';
 	@override String itemsQueued({required Object count}) => '${count} éléments mis en file d\'attente';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: shaders

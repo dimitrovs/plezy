@@ -66,6 +66,7 @@ class TranslationsNl with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsNavigationNl navigation = _TranslationsNavigationNl._(_root);
 	@override late final _TranslationsLiveTvNl liveTv = _TranslationsLiveTvNl._(_root);
 	@override late final _TranslationsDownloadsNl downloads = _TranslationsDownloadsNl._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsPlaylistsNl playlists = _TranslationsPlaylistsNl._(_root);
 	@override late final _TranslationsCollectionsNl collections = _TranslationsCollectionsNl._(_root);
 	@override late final _TranslationsWatchTogetherNl watchTogether = _TranslationsWatchTogetherNl._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesNl implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'Fout bij laden serie';
 	@override String get errorLoadingSeason => 'Fout bij laden seizoen';
 	@override String get musicNotSupported => 'Muziek afspelen wordt nog niet ondersteund';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'Logs gewist';
 	@override String get logsCopied => 'Logs gekopieerd naar klembord';
 	@override String get noLogsAvailable => 'Geen logs beschikbaar';
@@ -879,6 +882,11 @@ class _TranslationsDownloadsNl implements TranslationsDownloadsEn {
 	@override String get customAmount => 'Aangepast aantal...';
 	@override String get howManyEpisodes => 'Hoeveel afleveringen?';
 	@override String itemsQueued({required Object count}) => '${count} items in downloadwachtrij';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: playlists

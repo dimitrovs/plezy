@@ -69,6 +69,7 @@ class TranslationsJa with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsPlaylistsJa playlists = _TranslationsPlaylistsJa._(_root);
 	@override late final _TranslationsWatchTogetherJa watchTogether = _TranslationsWatchTogetherJa._(_root);
 	@override late final _TranslationsDownloadsJa downloads = _TranslationsDownloadsJa._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsShadersJa shaders = _TranslationsShadersJa._(_root);
 	@override late final _TranslationsCompanionRemoteJa companionRemote = _TranslationsCompanionRemoteJa._(_root);
 	@override late final _TranslationsVideoSettingsJa videoSettings = _TranslationsVideoSettingsJa._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesJa implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'シリーズの読み込みエラー';
 	@override String get errorLoadingSeason => 'シーズンの読み込みエラー';
 	@override String get musicNotSupported => '音楽の再生はまだサポートされていません';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'ログをクリアしました';
 	@override String get logsCopied => 'ログをクリップボードにコピーしました';
 	@override String get noLogsAvailable => 'ログがありません';
@@ -1003,6 +1006,11 @@ class _TranslationsDownloadsJa implements TranslationsDownloadsEn {
 	@override String get customAmount => '数を指定...';
 	@override String get howManyEpisodes => '何エピソード？';
 	@override String itemsQueued({required Object count}) => '${count}件をダウンロードキューに追加';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: shaders

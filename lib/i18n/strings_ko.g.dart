@@ -69,6 +69,7 @@ class TranslationsKo with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsPlaylistsKo playlists = _TranslationsPlaylistsKo._(_root);
 	@override late final _TranslationsWatchTogetherKo watchTogether = _TranslationsWatchTogetherKo._(_root);
 	@override late final _TranslationsDownloadsKo downloads = _TranslationsDownloadsKo._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsShadersKo shaders = _TranslationsShadersKo._(_root);
 	@override late final _TranslationsCompanionRemoteKo companionRemote = _TranslationsCompanionRemoteKo._(_root);
 	@override late final _TranslationsVideoSettingsKo videoSettings = _TranslationsVideoSettingsKo._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesKo implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => '시리즈 로딩 중 오류';
 	@override String get errorLoadingSeason => '시즌 로딩 중 오류';
 	@override String get musicNotSupported => '음악 재생 미지원';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => '로그가 삭제 되었습니다';
 	@override String get logsCopied => '로그가 클립보드에 복사 되었습니다';
 	@override String get noLogsAvailable => '사용 가능한 로그가 없습니다';
@@ -1003,6 +1006,11 @@ class _TranslationsDownloadsKo implements TranslationsDownloadsEn {
 	@override String get customAmount => '직접 입력...';
 	@override String get howManyEpisodes => '몇 개의 에피소드?';
 	@override String itemsQueued({required Object count}) => '${count}개 항목이 다운로드 대기열에 추가됨';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: shaders

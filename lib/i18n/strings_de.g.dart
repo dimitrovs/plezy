@@ -66,6 +66,7 @@ class TranslationsDe with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _TranslationsNavigationDe navigation = _TranslationsNavigationDe._(_root);
 	@override late final _TranslationsLiveTvDe liveTv = _TranslationsLiveTvDe._(_root);
 	@override late final _TranslationsDownloadsDe downloads = _TranslationsDownloadsDe._(_root);
+	@override late final TranslationsMusicEn music = TranslationsMusicEn._(_root);
 	@override late final _TranslationsPlaylistsDe playlists = _TranslationsPlaylistsDe._(_root);
 	@override late final _TranslationsCollectionsDe collections = _TranslationsCollectionsDe._(_root);
 	@override late final _TranslationsWatchTogetherDe watchTogether = _TranslationsWatchTogetherDe._(_root);
@@ -570,6 +571,8 @@ class _TranslationsMessagesDe implements TranslationsMessagesEn {
 	@override String get errorLoadingSeries => 'Fehler beim Laden der Serie';
 	@override String get errorLoadingSeason => 'Fehler beim Laden der Staffel';
 	@override String get musicNotSupported => 'Musikwiedergabe wird noch nicht unterstützt';
+	@override String get errorLoadingAlbum => 'Error loading album';
+	@override String get errorLoadingArtist => 'Error loading artist';
 	@override String get logsCleared => 'Protokolle gelöscht';
 	@override String get logsCopied => 'Protokolle in Zwischenablage kopiert';
 	@override String get noLogsAvailable => 'Keine Protokolle verfügbar';
@@ -879,6 +882,11 @@ class _TranslationsDownloadsDe implements TranslationsDownloadsEn {
 	@override String get customAmount => 'Eigene Anzahl...';
 	@override String get howManyEpisodes => 'Wie viele Episoden?';
 	@override String itemsQueued({required Object count}) => '${count} Elemente zum Download eingereiht';
+	@override String get music => 'Music';
+	@override String tracksQueued({required Object count}) => '${count} tracks queued for download';
+	@override String get allTracks => 'All tracks';
+	@override String get noDownloadsMusic => 'No music downloads yet';
+	@override String get noDownloadsMusicDescription => 'Downloaded music will appear here for offline listening';
 }
 
 // Path: playlists
